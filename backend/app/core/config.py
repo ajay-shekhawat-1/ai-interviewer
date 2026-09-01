@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     groq_api_key: str
     groq_model: str = "openai/gpt-oss-20b"
 
+    # Resume upload configuration
+    max_resume_size_mb: int = 5
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.resume import router as resume_router
 from app.core.config import get_settings
 from app.llm.groq_client import (
     get_groq_client,
@@ -29,6 +30,13 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+
+# ---------------------------------------------------------
+# Routers
+# ---------------------------------------------------------
+
+app.include_router(resume_router)
 
 
 # ---------------------------------------------------------
