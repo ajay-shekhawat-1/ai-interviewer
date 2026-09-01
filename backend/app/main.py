@@ -8,6 +8,7 @@ from app.llm.groq_client import (
     get_groq_model,
 )
 from app.api.jd import router as jd_router
+from app.api.candidate import router as candidate_router
 
 settings = get_settings()
 
@@ -38,6 +39,7 @@ app.add_middleware(
 
 app.include_router(resume_router)
 app.include_router(jd_router)
+app.include_router(candidate_router)
 
 
 # ---------------------------------------------------------
