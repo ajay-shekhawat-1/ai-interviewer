@@ -14,6 +14,9 @@ class Settings(BaseSettings):
 
     frontend_url: str = "http://localhost:5173"
 
+    groq_api_key: str
+    groq_model: str = "openai/gpt-oss-20b"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -26,8 +29,6 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """
     Return a cached application settings instance.
-
-    Caching prevents repeatedly creating the settings object
-    during the lifetime of the application.
     """
+
     return Settings()
