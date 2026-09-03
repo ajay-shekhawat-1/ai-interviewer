@@ -48,3 +48,17 @@ class JDProfile(BaseModel):
         default_factory=list,
         description="Technical areas that should be assessed during interview.",
     )
+
+
+class CreateJDRequest(BaseModel):
+    raw_text: str = Field(
+        ...,
+        min_length=50,
+        max_length=30000,
+        description="Raw job description text.",
+    )
+
+
+class JDResponse(BaseModel):
+    job_description_id: int
+    profile: JDProfile

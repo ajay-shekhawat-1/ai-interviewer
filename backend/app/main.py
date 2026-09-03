@@ -1,17 +1,36 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.resume import router as resume_router
-from app.core.config import get_settings
-from app.llm.groq_client import (
-    get_groq_client,
-    get_groq_model,
-)
 from app.api.jd import router as jd_router
 from app.api.candidate import router as candidate_router
+from app.api.interview import router as interview_router
+from app.api import questions
+from app.api import session
+from app.api import evaluation
+from app.api import adaptive
+from app.api.voice import router as voice_router
+from app.api.candidate_profile import router as candidate_profile_router
+
+from app.core.config import get_settings
+
+from app.db.database import Base, engine
+from app.db import models
+
 
 settings = get_settings()
 
+
+# ---------------------------------------------------------
+# DATABASE
+# ---------------------------------------------------------
+
+Base.metadata.create_all(bind=engine)
+
+
+# ---------------------------------------------------------
+# APPLICATION
+# ---------------------------------------------------------
 
 app = FastAPI(
     title=settings.app_name,
@@ -34,24 +53,27 @@ app.add_middleware(
 
 
 # ---------------------------------------------------------
-# Routers
+# ROUTERS
 # ---------------------------------------------------------
 
 app.include_router(resume_router)
 app.include_router(jd_router)
 app.include_router(candidate_router)
+app.include_router(interview_router)
+app.include_router(questions.router)
+app.include_router(session.router)
+app.include_router(evaluation.router)
+app.include_router(adaptive.router)
+app.include_router(candidate_profile_router)
+app.include_router(voice_router)
 
 
 # ---------------------------------------------------------
-# Root endpoint
+# ROOT ENDPOINT
 # ---------------------------------------------------------
 
 @app.get("/", tags=["System"])
 async def root() -> dict[str, str]:
-    """
-    Basic API information endpoint.
-    """
-
     return {
         "message": "AI Interviewer API is running",
         "version": settings.app_version,
@@ -60,83 +82,11 @@ async def root() -> dict[str, str]:
 
 
 # ---------------------------------------------------------
-# Health endpoint
+# HEALTH ENDPOINT
 # ---------------------------------------------------------
 
 @app.get("/health", tags=["System"])
 async def health_check() -> dict[str, str]:
-    """
-    Health check endpoint used by monitoring and deployment platforms.
-    """
-
     return {
         "status": "healthy",
     }
-
-
-# ---------------------------------------------------------
-# Temporary Groq Test Endpoint
-# ---------------------------------------------------------
-
-@app.get("/test-groq", tags=["Development"])
-async def test_groq() -> dict[str, str]:
-    """
-    Temporary endpoint used to verify Groq connectivity.
-    """
-
-    client = get_groq_client()
-    model = get_groq_model()
-
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {
-                "role": "user",
-                "content": "Reply with exactly: Groq connection successful",
-            }
-        ],
-        temperature=0,
-        max_tokens=20,
-    )
-
-    message = response.choices[0].message.content
-
-    return {
-        "status": "success",
-        "model": model,
-        "message": message or "",
-    }
-
-
-# ---------------------------------------------------------
-# Temporary Groq Model List Endpoint
-# ---------------------------------------------------------
-
-@app.get("/test-groq-models", tags=["Development"])
-async def test_groq_models() -> dict:
-    """
-    Temporary development endpoint that lists models
-    available to the configured Groq API key.
-    """
-
-    try:
-        client = get_groq_client()
-
-        models = client.models.list()
-
-        return {
-            "status": "success",
-            "models": [
-                {
-                    "id": model.id,
-                    "active": model.active,
-                }
-                for model in models.data
-            ],
-        }
-
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Unable to retrieve Groq models: {str(exc)}",
-        ) from exc
