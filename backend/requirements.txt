@@ -6,3 +6,5 @@ groq
 pymupdf
 python-docx
 python-multipart
+SQLAlchemy
+PyMySQL
