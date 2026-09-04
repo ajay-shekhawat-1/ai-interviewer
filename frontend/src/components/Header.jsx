@@ -1,28 +1,20 @@
 function Header() {
   return (
-    <header className="top-header">
+    <header className="header">
       <div className="header-left">
-        <span className="header-status-dot"></span>
-        <span>Interview workspace</span>
+        <h2 className="header-title">
+          Interview Workspace
+        </h2>
+
+        <p className="header-subtitle">
+          Prepare, practice, and improve your interview performance.
+        </p>
       </div>
 
       <div className="header-right">
-        <button
-          className="header-help"
-          type="button"
-          onClick={() => {
-            alert("Help center will be added later.");
-          }}
-        >
-          Help
-        </button>
-
-        <div className="header-profile">
-          <div className="header-avatar">
-            C
-          </div>
-
-          <span>Candidate</span>
+        <div className="header-status">
+          <span className="header-status-dot"></span>
+          <span>Workspace ready</span>
         </div>
       </div>
     </header>

@@ -14,7 +14,23 @@ function Sidebar({ currentPage, onNavigate }) {
       label: "New Interview",
       icon: "＋",
     },
+    {
+      id: "history",
+      label: "History",
+      icon: "◷",
+    },
+    {
+      id: "performance",
+      label: "Performance",
+      icon: "↗",
+    },
   ];
+
+  const handleNavigation = (page) => {
+    if (typeof onNavigate === "function") {
+      onNavigate(page);
+    }
+  };
 
   return (
     <aside
@@ -22,10 +38,14 @@ function Sidebar({ currentPage, onNavigate }) {
         collapsed ? "sidebar-collapsed" : ""
       }`}
     >
+      {/* ================================
+          SIDEBAR HEADER
+      ================================= */}
+
       <div className="sidebar-top">
         <div className="sidebar-brand">
-          {!collapsed && (
-            <div>
+          {!collapsed ? (
+            <div className="sidebar-brand-content">
               <div className="brand-name">
                 AI Interviewer
               </div>
@@ -34,9 +54,7 @@ function Sidebar({ currentPage, onNavigate }) {
                 Interview practice
               </div>
             </div>
-          )}
-
-          {collapsed && (
+          ) : (
             <div className="brand-mark">
               AI
             </div>
@@ -45,96 +63,106 @@ function Sidebar({ currentPage, onNavigate }) {
 
         <button
           className="sidebar-toggle"
-          onClick={() => setCollapsed(!collapsed)}
           type="button"
-          aria-label="Toggle sidebar"
+          onClick={() =>
+            setCollapsed((value) => !value)
+          }
+          aria-label={
+            collapsed
+              ? "Expand sidebar"
+              : "Collapse sidebar"
+          }
+          title={
+            collapsed
+              ? "Expand sidebar"
+              : "Collapse sidebar"
+          }
         >
           {collapsed ? "→" : "←"}
         </button>
       </div>
 
-      <nav className="sidebar-nav">
-        <div className="nav-label">
-          {!collapsed && "WORKSPACE"}
-        </div>
+      {/* ================================
+          NAVIGATION
+      ================================= */}
 
-        {navigation.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className={`nav-item ${
-              currentPage === item.id
-                ? "nav-item-active"
-                : ""
-            }`}
-            onClick={() => onNavigate(item.id)}
-          >
-            <span className="nav-icon">
-              {item.icon}
-            </span>
+      <nav
+        className="sidebar-nav"
+        aria-label="Main navigation"
+      >
+        {!collapsed && (
+          <div className="nav-label">
+            WORKSPACE
+          </div>
+        )}
 
-            {!collapsed && (
-              <span>{item.label}</span>
-            )}
-          </button>
-        ))}
+        {navigation.map((item) => {
+          const isActive =
+            currentPage === item.id;
 
-        <button
-          type="button"
-          className="nav-item"
-          onClick={() =>
-            alert(
-              "Interview history will be connected next."
-            )
-          }
-        >
-          <span className="nav-icon">◷</span>
+          return (
+            <button
+              key={item.id}
+              type="button"
+              className={`nav-item ${
+                isActive
+                  ? "nav-item-active"
+                  : ""
+              }`}
+              onClick={() =>
+                handleNavigation(item.id)
+              }
+              aria-current={
+                isActive ? "page" : undefined
+              }
+              title={
+                collapsed
+                  ? item.label
+                  : undefined
+              }
+            >
+              <span
+                className="nav-icon"
+                aria-hidden="true"
+              >
+                {item.icon}
+              </span>
 
-          {!collapsed && <span>History</span>}
-        </button>
-
-        <button
-          type="button"
-          className="nav-item"
-          onClick={() =>
-            alert(
-              "Performance analytics will be connected later."
-            )
-          }
-        >
-          <span className="nav-icon">↗</span>
-
-          {!collapsed && <span>Performance</span>}
-        </button>
+              {!collapsed && (
+                <span className="nav-item-label">
+                  {item.label}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </nav>
 
-      {!collapsed && (
-        <div className="sidebar-bottom">
-          <button
-            type="button"
-            className="nav-item"
-            onClick={() =>
-              alert("Settings will be added later.")
-            }
-          >
-            <span className="nav-icon">⚙</span>
-            <span>Settings</span>
-          </button>
+      {/* ================================
+          SIDEBAR FOOTER
+      ================================= */}
 
-          <div className="sidebar-divider"></div>
+      <div className="sidebar-bottom">
+        {!collapsed && (
+          <>
+            <div className="sidebar-divider" />
 
-          <div className="candidate-mini">
-            <div className="candidate-avatar">
-              C
+            <div className="candidate-mini">
+              <div className="candidate-avatar">
+                C
+              </div>
+
+              <div className="candidate-info">
+                <strong>Candidate</strong>
+
+                <span>
+                  Interview workspace
+                </span>
+              </div>
             </div>
-
-            <div className="candidate-info">
-              <strong>Candidate</strong>
-              <span>Interview workspace</span>
-            </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </aside>
   );
 }

@@ -1,127 +1,136 @@
-function Dashboard({ onNewInterview }) {
+function Dashboard({ onNewInterview, onViewHistory }) {
   return (
-    <div className="dashboard">
-      <section className="dashboard-intro">
+    <div className="dashboard-page">
+
+      <section className="dashboard-header">
         <div>
-          <p className="eyebrow">
-            YOUR WORKSPACE
-          </p>
+          <div className="eyebrow">DASHBOARD</div>
 
-          <h1>
-            Prepare with purpose.
-          </h1>
+          <h1>Interview workspace</h1>
 
-          <p className="intro-text">
-            Practice realistic interviews tailored to
-            the role, job description, and experience
-            on your resume.
+          <p>
+            Practice interviews tailored to your resume and target role.
           </p>
         </div>
 
         <button
-          className="primary-button dashboard-action"
+          className="primary-button"
           type="button"
           onClick={onNewInterview}
         >
-          <span>+</span>
-          Start new interview
+          + New interview
         </button>
       </section>
 
-      <section className="overview-section">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">
-              OVERVIEW
-            </p>
+
+      <section className="dashboard-main">
+
+        <div className="welcome-panel">
+
+          <div className="welcome-content">
+            <span className="welcome-label">
+              READY TO PRACTICE
+            </span>
 
             <h2>
-              Your interview activity
+              Start your next interview.
             </h2>
-          </div>
-        </div>
-
-        <div className="overview-grid">
-          <div className="overview-item">
-            <span className="overview-label">
-              Interviews completed
-            </span>
-
-            <strong>0</strong>
-
-            <span className="overview-note">
-              Start your first interview
-            </span>
-          </div>
-
-          <div className="overview-item">
-            <span className="overview-label">
-              Average score
-            </span>
-
-            <strong>—</strong>
-
-            <span className="overview-note">
-              Available after your first interview
-            </span>
-          </div>
-
-          <div className="overview-item">
-            <span className="overview-label">
-              Latest result
-            </span>
-
-            <strong>—</strong>
-
-            <span className="overview-note">
-              No interviews yet
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <section className="recent-section">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">
-              RECENT
-            </p>
-
-            <h2>
-              Interview history
-            </h2>
-          </div>
-
-          <button
-            className="text-button"
-            type="button"
-            onClick={() =>
-              alert(
-                "Interview history will be connected next."
-              )
-            }
-          >
-            View all
-          </button>
-        </div>
-
-        <div className="empty-history">
-          <div className="empty-history-mark">
-            +
-          </div>
-
-          <div>
-            <h3>
-              No interviews yet
-            </h3>
 
             <p>
-              Complete your first AI interview and your
-              results will appear here.
+              Upload your resume, add the job description,
+              and let the AI interviewer handle the rest.
             </p>
+
+            <button
+              className="primary-button"
+              type="button"
+              onClick={onNewInterview}
+            >
+              Start interview
+              <span>→</span>
+            </button>
           </div>
+
+          <div className="welcome-mark">
+            AI
+          </div>
+
         </div>
+
+
+        <div className="dashboard-section">
+
+          <div className="section-header">
+            <div>
+              <h2>Overview</h2>
+              <p>Your interview activity.</p>
+            </div>
+          </div>
+
+
+          <div className="stats-grid">
+
+            <div className="stat-item">
+              <span>INTERVIEWS</span>
+              <strong>0</strong>
+              <small>Completed</small>
+            </div>
+
+            <div className="stat-item">
+              <span>AVERAGE SCORE</span>
+              <strong>—</strong>
+              <small>After first interview</small>
+            </div>
+
+            <div className="stat-item">
+              <span>LATEST RESULT</span>
+              <strong>—</strong>
+              <small>No result yet</small>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div className="dashboard-section">
+
+          <div className="section-header">
+            <div>
+              <h2>Recent interviews</h2>
+              <p>Your latest sessions will appear here.</p>
+            </div>
+
+            <button
+              className="text-button"
+              type="button"
+              onClick={onViewHistory}
+            >
+              View history →
+            </button>
+          </div>
+
+
+          <div className="recent-empty">
+
+            <div className="recent-empty-icon">
+              ◷
+            </div>
+
+            <div>
+              <strong>No interviews yet</strong>
+
+              <p>
+                Complete your first interview to see it here.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
       </section>
+
     </div>
   );
 }

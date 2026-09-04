@@ -44,7 +44,11 @@ class SubmitAnswerRequest(BaseModel):
 # ---------------------------------------------------------
 
 class InterviewAnswer(BaseModel):
-    question_id: str
+    question_id: str = Field(
+        ...,
+        min_length=1,
+        max_length=20,
+    )
     question: str
     answer: str
     evaluation: dict | None = None

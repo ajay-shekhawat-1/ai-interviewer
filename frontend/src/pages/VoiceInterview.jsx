@@ -924,32 +924,94 @@ function VoiceInterview({ interviewData, onFinish }) {
    * automatically after the last answer.
    */
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
+  if (
+    isListening ||
+    isTranscribing ||
+    isProcessing ||
+    isLoadingReport
+  ) {
+    return;
+  }
 
-    if (
-      isListening ||
-      isTranscribing ||
-      isProcessing ||
-      isLoadingReport
-    ) {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
 
-      return;
+  setIsSpeaking(false);
+
+  const sessionId =
+    session?.session_id ||
+    interviewData?.sessionId;
+
+  if (!sessionId) {
+    setError("Interview session ID is missing.");
+    return;
+  }
+
+  try {
+    setIsLoadingReport(true);
+    setError("");
+
+    console.log(
+      "Finishing interview:",
+      sessionId
+    );
+
+    // ---------------------------------------------
+    // 1. Mark interview as completed
+    // ---------------------------------------------
+
+    const finishResponse = await fetch(
+      `${API_BASE_URL}/api/session/${sessionId}/finish`,
+      {
+        method: "POST",
+      }
+    );
+
+    if (!finishResponse.ok) {
+      const errorData =
+        await finishResponse.json().catch(
+          () => ({})
+        );
+
+      throw new Error(
+        errorData.detail ||
+          "Unable to finish the interview."
+      );
     }
 
+    const finishedSession =
+      await finishResponse.json();
 
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
+    console.log(
+      "Interview marked as completed:",
+      finishedSession
+    );
 
+    // ---------------------------------------------
+    // 2. Generate final report
+    // ---------------------------------------------
 
-    setIsSpeaking(false);
+    await fetchFinalReport(sessionId);
 
+  } catch (error) {
 
-    onFinish(report);
+    console.error(
+      "Finish interview error:",
+      error
+    );
 
-  };
+    setError(
+      error.message ||
+        "Unable to finish the interview."
+    );
 
+  } finally {
 
+    setIsLoadingReport(false);
+  }
+};
   /*
    * --------------------------------------------------
    * Cleanup

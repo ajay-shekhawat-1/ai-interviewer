@@ -2,23 +2,25 @@ import { useState } from "react";
 
 import AppShell from "./components/AppShell";
 import InterviewReport from "./components/InterviewReport";
+
 import Dashboard from "./pages/Dashboard";
+import History from "./pages/History";
 import InterviewResult from "./pages/InterviewResult";
 import InterviewSetup from "./pages/InterviewSetup";
+import Performance from "./pages/Performance";
 import VoiceInterview from "./pages/VoiceInterview";
 
 function App() {
   const [page, setPage] = useState("dashboard");
 
-  const [interviewData, setInterviewData] =
-    useState({
-      candidateId: null,
-      jobDescriptionId: null,
-      sessionId: null,
-      role: "",
-      jobDescription: "",
-      interview: null,
-    });
+  const [interviewData, setInterviewData] = useState({
+    candidateId: null,
+    jobDescriptionId: null,
+    sessionId: null,
+    role: "",
+    jobDescription: "",
+    interview: null,
+  });
 
   const [finalReport, setFinalReport] = useState(null);
 
@@ -26,37 +28,61 @@ function App() {
     setPage(nextPage);
   };
 
+  // =========================================================
+  // START NEW INTERVIEW
+  // =========================================================
+
   const startInterview = (data) => {
-    console.log(
-      "Interview started:",
-      data
-    );
+    console.log("Interview started:", data);
 
     setInterviewData(data);
-
     setFinalReport(null);
-
     setPage("interview");
   };
 
-  /*
-   * Receive the final report from VoiceInterview
-   * and open the report page.
-   */
+  // =========================================================
+  // FINISH CURRENT INTERVIEW
+  // =========================================================
+
   const finishInterview = (report) => {
+    console.log("Final interview report:", report);
+
+    setFinalReport(report);
+    setPage("report");
+  };
+
+  // =========================================================
+  // OPEN SAVED INTERVIEW REPORT
+  // =========================================================
+
+  const openInterviewReport = (sessionId, report) => {
     console.log(
-      "Final interview report:",
+      "Opening saved interview report:",
+      sessionId,
       report
     );
 
+    if (!report) {
+      window.alert(
+        "Unable to load interview report."
+      );
+      return;
+    }
+
     setFinalReport(report);
+
+    setInterviewData((previous) => ({
+      ...previous,
+      sessionId,
+    }));
 
     setPage("report");
   };
 
-  /*
-   * Start a completely new interview.
-   */
+  // =========================================================
+  // RESTART / NEW INTERVIEW
+  // =========================================================
+
   const restartInterview = () => {
     setFinalReport(null);
 
@@ -72,14 +98,16 @@ function App() {
     setPage("dashboard");
   };
 
+  // =========================================================
+  // PAGE ROUTING
+  // =========================================================
+
   const renderPage = () => {
     switch (page) {
 
-      /*
-       * ------------------------------------------
-       * DASHBOARD
-       * ------------------------------------------
-       */
+      // -----------------------------------------------------
+      // DASHBOARD
+      // -----------------------------------------------------
 
       case "dashboard":
         return (
@@ -87,15 +115,16 @@ function App() {
             onNewInterview={() =>
               navigate("setup")
             }
+            onViewHistory={() =>
+              navigate("history")
+            }
           />
         );
 
 
-      /*
-       * ------------------------------------------
-       * INTERVIEW SETUP
-       * ------------------------------------------
-       */
+      // -----------------------------------------------------
+      // INTERVIEW SETUP
+      // -----------------------------------------------------
 
       case "setup":
         return (
@@ -110,11 +139,46 @@ function App() {
         );
 
 
-      /*
-       * ------------------------------------------
-       * VOICE INTERVIEW
-       * ------------------------------------------
-       */
+      // -----------------------------------------------------
+      // HISTORY
+      // -----------------------------------------------------
+
+      case "history":
+        return (
+          <History
+            onBack={() =>
+              navigate("dashboard")
+            }
+            onNewInterview={() =>
+              navigate("setup")
+            }
+            onViewReport={
+              openInterviewReport
+            }
+          />
+        );
+
+
+      // -----------------------------------------------------
+      // PERFORMANCE
+      // -----------------------------------------------------
+
+      case "performance":
+        return (
+          <Performance
+            onBack={() =>
+              navigate("dashboard")
+            }
+            onNewInterview={() =>
+              navigate("setup")
+            }
+          />
+        );
+
+
+      // -----------------------------------------------------
+      // VOICE INTERVIEW
+      // -----------------------------------------------------
 
       case "interview":
         return (
@@ -129,15 +193,9 @@ function App() {
         );
 
 
-      /*
-       * ------------------------------------------
-       * OLD RESULT PAGE
-       * ------------------------------------------
-       *
-       * Keep this for now.
-       * We may remove it later if the new
-       * InterviewReport completely replaces it.
-       */
+      // -----------------------------------------------------
+      // INTERVIEW RESULT
+      // -----------------------------------------------------
 
       case "result":
         return (
@@ -152,11 +210,9 @@ function App() {
         );
 
 
-      /*
-       * ------------------------------------------
-       * FINAL INTERVIEW REPORT
-       * ------------------------------------------
-       */
+      // -----------------------------------------------------
+      // FINAL REPORT
+      // -----------------------------------------------------
 
       case "report":
         return (
@@ -169,11 +225,9 @@ function App() {
         );
 
 
-      /*
-       * ------------------------------------------
-       * DEFAULT
-       * ------------------------------------------
-       */
+      // -----------------------------------------------------
+      // DEFAULT
+      // -----------------------------------------------------
 
       default:
         return (
@@ -181,21 +235,29 @@ function App() {
             onNewInterview={() =>
               navigate("setup")
             }
+            onViewHistory={() =>
+              navigate("history")
+            }
           />
         );
     }
   };
 
 
-  /*
-   * Voice interview should be distraction-free.
-   * Therefore it does not use the dashboard sidebar.
-   */
+  // =========================================================
+  // INTERVIEW SCREEN
+  // =========================================================
+  // Keep the interview screen distraction-free.
+  // =========================================================
 
   if (page === "interview") {
     return renderPage();
   }
 
+
+  // =========================================================
+  // NORMAL APP SHELL
+  // =========================================================
 
   return (
     <AppShell
