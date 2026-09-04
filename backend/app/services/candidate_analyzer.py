@@ -113,5 +113,5 @@ Job Description:
 
     except Exception as exc:
         raise CandidateAnalysisError(
-            "Unable to analyze the candidate."
+            f"Unable to analyze the candidate: {type(exc).__name__}: {str(exc)}"
         ) from exc
